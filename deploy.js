@@ -1513,7 +1513,7 @@ async function deployUSDC(web3, account) {
  * Deploy RideSharing Contract
  */
 async function deployRideSharing(web3, account, usdcAddress) {
-    console.log('\n🚀 ===== DEPLOY RIDESHARING CONTRACT =====\n');
+    console.log('\n===== DEPLOY RIDESHARING CONTRACT =====\n');
 
     try {
         const rideSharingContract = new web3.eth.Contract(RIDESHARING_ABI);
@@ -1525,14 +1525,14 @@ async function deployRideSharing(web3, account, usdcAddress) {
 
         // Estimasi gas
         const gas = await deployTx.estimateGas({ from: account.address });
-        console.log(`📊 Estimasi Gas: ${gas}`);
+        console.log(`Estimasi Gas: ${gas}`);
 
         // Get current gas price
         const gasPrice = await web3.eth.getGasPrice();
-        console.log(`💰 Gas Price: ${web3.utils.fromWei(gasPrice, 'gwei')} Gwei`);
+        console.log(`Gas Price: ${web3.utils.fromWei(gasPrice, 'gwei')} Gwei`);
 
         // Deploy contract
-        console.log('📤 Mengirim transaksi deployment RideSharing...');
+        console.log('Mengirim transaksi deployment RideSharing...');
         const tx = await deployTx.send({
             from: account.address,
             gas: gas.toString(),
@@ -1540,14 +1540,14 @@ async function deployRideSharing(web3, account, usdcAddress) {
         });
 
         const rideSharingAddress = tx.options.address;
-        console.log(`✅ RideSharing Contract berhasil di-deploy!`);
-        console.log(`   📍 Contract Address: ${rideSharingAddress}`);
-        console.log(`   🔗 Etherscan: https://sepolia.etherscan.io/address/${rideSharingAddress}`);
+        console.log(`RideSharing Contract berhasil di-deploy!`);
+        console.log(`Contract Address: ${rideSharingAddress}`);
+        console.log(`Etherscan: https://sepolia.etherscan.io/address/${rideSharingAddress}`);
 
         return rideSharingAddress;
 
     } catch (error) {
-        console.error('❌ Error saat deploy RideSharing:', error.message);
+        console.error('Error saat deploy RideSharing:', error.message);
         throw error;
     }
 }
@@ -1556,7 +1556,7 @@ async function deployRideSharing(web3, account, usdcAddress) {
  * Verifikasi deployment dengan memanggil fungsi di contract
  */
 async function verifyDeployment(web3, usdcAddress, rideSharingAddress) {
-    console.log('\n🔍 ===== VERIFIKASI DEPLOYMENT =====\n');
+    console.log('\n ===== VERIFIKASI DEPLOYMENT =====\n');
 
     try {
         // Verifikasi USDC
@@ -1565,23 +1565,23 @@ async function verifyDeployment(web3, usdcAddress, rideSharingAddress) {
         const usdcSymbol = await usdcContract.methods.symbol().call();
         const usdcDecimals = await usdcContract.methods.decimals().call();
 
-        console.log('✅ USDC Contract:');
-        console.log(`   Name: ${usdcName}`);
-        console.log(`   Symbol: ${usdcSymbol}`);
-        console.log(`   Decimals: ${usdcDecimals}`);
+        console.log('USDC Contract:');
+        console.log(`Name: ${usdcName}`);
+        console.log(`Symbol: ${usdcSymbol}`);
+        console.log(`Decimals: ${usdcDecimals}`);
 
         // Verifikasi RideSharing
         const rideSharingContract = new web3.eth.Contract(RIDESHARING_ABI, rideSharingAddress);
         const usdcTokenAddress = await rideSharingContract.methods.usdcToken().call();
         const rideCounter = await rideSharingContract.methods.rideCounter().call();
 
-        console.log('\n✅ RideSharing Contract:');
-        console.log(`   USDC Token Address: ${usdcTokenAddress}`);
-        console.log(`   Ride Counter: ${rideCounter}`);
-        console.log(`   USDC Match: ${usdcTokenAddress.toLowerCase() === usdcAddress.toLowerCase() ? '✅' : '❌'}`);
+        console.log('\nRideSharing Contract:');
+        console.log(`USDC Token Address: ${usdcTokenAddress}`);
+        console.log(`Ride Counter: ${rideCounter}`);
+        console.log(`USDC Match: ${usdcTokenAddress.toLowerCase() === usdcAddress.toLowerCase() ? '✅' : '❌'}`);
 
     } catch (error) {
-        console.error('❌ Error saat verifikasi:', error.message);
+        console.error('Error saat verifikasi:', error.message);
     }
 }
 
@@ -1590,40 +1590,40 @@ async function verifyDeployment(web3, usdcAddress, rideSharingAddress) {
 // ============================================
 
 async function main() {
-    console.log('\n🌟 ===== DEPLOYMENT SCRIPT DIMULAI =====\n');
+    console.log('\n===== DEPLOYMENT SCRIPT DIMULAI =====\n');
 
     // Validasi environment variables
     if (!PRIVATE_KEY || !RPC_URL || !INITIAL_OWNER) {
-        console.error('❌ Error: Pastikan PRIVATE_KEY, RPC_URL, dan WALLET_ADDRESS sudah diset di .env');
+        console.error('Error: Pastikan PRIVATE_KEY, RPC_URL, dan WALLET_ADDRESS sudah diset di .env');
         process.exit(1);
     }
 
     try {
         // Inisialisasi Web3
         const web3 = new Web3(RPC_URL);
-        console.log('✅ Koneksi ke Sepolia Testnet berhasil');
+        console.log('Koneksi ke Sepolia Testnet berhasil');
 
         // Load account dari private key
         const account = web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
         web3.eth.accounts.wallet.add(account);
         web3.eth.defaultAccount = account.address;
 
-        console.log(`👤 Deployer Address: ${account.address}`);
+        console.log(`Deployer Address: ${account.address}`);
 
         // Cek balance
         const balance = await web3.eth.getBalance(account.address);
         const balanceInEth = web3.utils.fromWei(balance, 'ether');
-        console.log(`💰 Balance: ${balanceInEth} ETH`);
+        console.log(`Balance: ${balanceInEth} ETH`);
 
         if (parseFloat(balanceInEth) < 0.01) {
-            console.warn('⚠️  Warning: Balance ETH rendah! Pastikan Anda punya cukup ETH untuk gas fees');
+            console.warn('Warning: Balance ETH rendah! Pastikan Anda punya cukup ETH untuk gas fees');
         }
 
         // Deploy USDC Contract
         const usdcAddress = await deployUSDC(web3, account);
 
         // Tunggu beberapa detik sebelum deploy contract berikutnya
-        console.log('\n⏳ Menunggu 10 detik sebelum deploy RideSharing...');
+        console.log('\nMenunggu 10 detik sebelum deploy RideSharing...');
         await new Promise(resolve => setTimeout(resolve, 10000));
 
         // Deploy RideSharing Contract
@@ -1633,22 +1633,21 @@ async function main() {
         await verifyDeployment(web3, usdcAddress, rideSharingAddress);
 
         // Summary
-        console.log('\n\n🎉 ===== DEPLOYMENT SELESAI =====\n');
-        console.log('📋 RINGKASAN:');
-        console.log(`   USDC Contract: ${usdcAddress}`);
-        console.log(`   RideSharing Contract: ${rideSharingAddress}`);
-        console.log(`\n🔗 Lihat di Etherscan:`);
-        console.log(`   USDC: https://sepolia.etherscan.io/address/${usdcAddress}`);
-        console.log(`   RideSharing: https://sepolia.etherscan.io/address/${rideSharingAddress}`);
-        console.log('\n💡 Simpan address contract ini untuk digunakan di frontend!\n');
+        console.log('\n\n===== DEPLOYMENT SELESAI =====\n');
+        console.log('RINGKASAN:');
+        console.log(`USDC Contract: ${usdcAddress}`);
+        console.log(`RideSharing Contract: ${rideSharingAddress}`);
+        console.log(`\nLihat di Etherscan:`);
+        console.log(`USDC: https://sepolia.etherscan.io/address/${usdcAddress}`);
+        console.log(`RideSharing: https://sepolia.etherscan.io/address/${rideSharingAddress}`);
+        console.log('\nSimpan address contract ini untuk digunakan di frontend!\n');
 
     } catch (error) {
-        console.error('\n💥 Error fatal:', error);
+        console.error('\nError fatal:', error);
         process.exit(1);
     }
 }
 
-// Jalankan script
 main()
     .then(() => process.exit(0))
     .catch(error => {
